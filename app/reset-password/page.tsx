@@ -1,10 +1,11 @@
 'use client'
 
-import { useState, useEffect, Suspense } from 'react'
+import { useState } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 
-function ResetPasswordForm() {
+// Simple reset password page without useSearchParams to avoid build issues
+export default function ResetPasswordPage() {
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -13,17 +14,6 @@ function ResetPasswordForm() {
   
   const { updatePassword } = useAuth()
   const router = useRouter()
-  const searchParams = useSearchParams()
-
-  useEffect(() => {
-    // Check if we have the proper tokens in the URL
-    const accessToken = searchParams.get('access_token')
-    const refreshToken = searchParams.get('refresh_token')
-    
-    if (!accessToken || !refreshToken) {
-      setError('Invalid reset link. Please request a new password reset.')
-    }
-  }, [searchParams])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -63,6 +53,9 @@ function ResetPasswordForm() {
   return (
     <div className="container">
       <h1>Reset Your Password</h1>
+      <p style={{ marginBottom: '1rem', color: '#6b7280' }}>
+        Enter your new password below.
+      </p>
       
       <form onSubmit={handleSubmit} className="form">
         <input
@@ -96,18 +89,16 @@ function ResetPasswordForm() {
 
       {error && <div className="error">{error}</div>}
       {message && <div className="success">{message}</div>}
-    </div>
-  )
-}
-
-export default function ResetPasswordPage() {
-  return (
-    <Suspense fallback={
-      <div className="container">
-        <div className="text-center">Loading...</div>
+      
+      <div className="text-center mt-4">
+        <button
+          type="button"
+          onClick={() => router.push('/login')}
+          className="link"
+        >
+          Back to Login
+        </button>
       </div>
-    }>
-      <ResetPasswordForm />
-    </Suspense>
+    </div>
   )
 }
