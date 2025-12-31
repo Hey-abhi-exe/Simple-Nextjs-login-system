@@ -1,0 +1,31 @@
+'use client'
+
+import { useAuth } from '@/contexts/AuthContext'
+import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
+import Dashboard from '@/components/Dashboard'
+
+export default function DashboardPage() {
+  const { user, loading } = useAuth()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (!user && !loading) {
+      router.push('/login')
+    }
+  }, [user, loading, router])
+
+  if (loading) {
+    return (
+      <div className="container">
+        <div className="text-center">Loading...</div>
+      </div>
+    )
+  }
+
+  if (!user) {
+    return null // Will redirect
+  }
+
+  return <Dashboard />
+}
